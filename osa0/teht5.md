@@ -1,5 +1,5 @@
+```mermaid
 sequenceDiagram
-
     participant browser
     participant server
 
@@ -24,3 +24,4 @@ sequenceDiagram
     activate server
     server-->>browser: the json file: [{"content": "test","date": "2024-03-10T21:00:35.808Z"},...]
     deactivate server
+```
