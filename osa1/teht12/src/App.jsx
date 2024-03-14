@@ -9,14 +9,9 @@ const Votes = (props) => {
   )
 }
 
-const AddVote = ({ selected, points }) => {
-  console.log(selected, points)
-  const copy = [...points]
-  copy[selected] += 1
-  return (
-    copy
-  )
-}
+const MostVoted = ({ selected }) => <p>{selected}</p>
+
+const Title = ({ text }) => <h1>{text}</h1>
 
 const App = () => {
   const anecdotes = [
@@ -30,20 +25,34 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
 
+  // amount of points for each anecdote
   const [points, setPoints] = useState(new Uint8Array(anecdotes.length))
-
+  // the selected anecdote
   const [selected, setSelected] = useState(0)
+  // the anecdote with most votes
+  const [mostVotes, setMostVotes] = useState(0)
 
-  console.log(points)
+  const handleVoting = () => {
+    const copy = [...points]
+    copy[selected] += 1
+    setPoints(copy)
+    setMostVotes(copy.indexOf(Math.max(...copy)))
+  }
 
   return (
     <div>
+      <Title text='Anecdote of the day' />
       <p>{anecdotes[selected]}</p>
       <Votes points={points} selected={selected} />
-      <Button text='Vote' handleClick={() => setPoints(AddVote({ selected, points }))} />
+      <Button text='Vote' handleClick={handleVoting} />
       <Button text='Next Anecdote' handleClick={() => setSelected((Math.floor(Math.random() * (8))))} />
+      <Title text='Anecdote with most votes' />
+      <MostVoted selected={anecdotes[mostVotes]} />
+      <Votes points={points} selected={mostVotes} />
     </div>
   )
 }
 
 export default App
+
+// {points.indexOf(Math.max(...points))}
