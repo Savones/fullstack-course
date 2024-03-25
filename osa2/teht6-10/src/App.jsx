@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
 const Person = (props) => {
   if (props.name.toLowerCase().includes(props.filter.toLowerCase())) {
     return (
       <p>
         {props.name} {props.number}
+        <button onClick={() => props.onclick(props.id, props.name)}>Delete</button>
       </p>
     )
   }
@@ -23,16 +24,27 @@ const Filter = (props) => {
   )
 }
 
-const Persons = ({ persons, filter }) => {
+const Persons = ({ persons, filter, onclick }) => {
   return (
     <>
       {persons.map(person =>
-        <Person filter={filter} name={person.name} number={person.number} key={person.name} />
+        <Person onclick={onclick} id={person.id} filter={filter} name={person.name} number={person.number} key={person.name} />
       )}
     </>
   );
 };
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="success">
+      {message}
+    </div>
+  )
+}
 
 const PersonForm = (props) => {
   return (
@@ -64,11 +76,13 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
+
   const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(savedPersons => {
+        setPersons(savedPersons)
       })
   }
 
@@ -76,25 +90,71 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
-    if (!persons.find(isFound)) {
+    const foundPerson = persons.find(person => person.name === newName)
+
+    if (!foundPerson) {
       const nameObject = {
         name: newName,
         number: newNumber
       }
-      setPersons(persons.concat(nameObject))
-      setNewName('')
-      setNewNumber('')
+
+      personService
+        .addPerson(nameObject)
+        .then(addedPerson => {
+          setPersons(persons.concat(addedPerson))
+          setNewName('')
+          setNewNumber('')
+          setSuccessMessage(
+            `${addedPerson.name} was successfully added.`
+          )
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
+        })
+
     } else {
-      alert(`${newName} is already added to phonebook`)
+      let answer = window.confirm(`${foundPerson.name} already exists in the phonebook. Do you want to change their number?`)
+      if (answer === true) {
+        const updatedPerson = { ...foundPerson, number: newNumber }
+        personService
+          .changeNumber(foundPerson.id, updatedPerson)
+          .then(changedPerson => {
+            setPersons(persons.map(person => person.id !== foundPerson.id ? person : changedPerson))
+            setNewName('')
+            setNewNumber('')
+            setSuccessMessage(
+              `${changedPerson.name}'s number was successfully changed.`
+            )
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
+          })
+      }
     }
   }
-  const isFound = (person) => {
-    return person.name === newName
+
+  const deletePerson = (id, name) => {
+    let result = window.confirm(`Are you sure you want to delete ${name}?`)
+    if (result === true) {
+      personService
+        .deletePerson(id)
+        .then(response => {
+          setSuccessMessage(
+            `${name} was successfully deleted of the phonebook.`
+          )
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
+        })
+    } else {
+      console.log('Poisto peruttu')
+    }
   }
 
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={successMessage} />
       <Filter value={filter} handleFilterChange={(event) => setFilter(event.target.value)} />
 
       <h2>Add a new</h2>
@@ -107,7 +167,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons filter={filter} persons={persons} />
+      <Persons filter={filter} persons={persons} onclick={deletePerson} />
     </div>
   )
 
