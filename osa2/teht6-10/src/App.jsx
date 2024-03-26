@@ -34,14 +34,19 @@ const Persons = ({ persons, filter, onclick }) => {
   );
 };
 
-const Notification = ({ message }) => {
-  if (message === null) {
+const Notification = ({ errorMessage, successMessage }) => {
+  if (errorMessage === null && successMessage === null) {
     return null
+  } else if (errorMessage === null) {
+    return (
+      <div className="success">
+        {successMessage}
+      </div>
+    )
   }
-
   return (
-    <div className="success">
-      {message}
+    <div className="error">
+      {errorMessage}
     </div>
   )
 }
@@ -77,6 +82,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const hook = () => {
     personService
@@ -122,12 +128,22 @@ const App = () => {
             setPersons(persons.map(person => person.id !== foundPerson.id ? person : changedPerson))
             setNewName('')
             setNewNumber('')
-            setSuccessMessage(
+            setSuccessMe`${changedPerson.name}'s number could not be changed.`
+            ssage(
               `${changedPerson.name}'s number was successfully changed.`
             )
             setTimeout(() => {
               setSuccessMessage(null)
             }, 5000)
+          })
+          .catch(error => {
+            setErrorMessage(
+              `${updatedPerson.name}'s number could not be changed as they have already been removed.`
+            )
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
+            setPersons(persons.filter(person => person.name !== newName))
           })
       }
     }
@@ -138,7 +154,8 @@ const App = () => {
     if (result === true) {
       personService
         .deletePerson(id)
-        .then(response => {
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id));
           setSuccessMessage(
             `${name} was successfully deleted of the phonebook.`
           )
@@ -154,7 +171,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={successMessage} />
+      <Notification errorMessage={errorMessage} successMessage={successMessage} />
       <Filter value={filter} handleFilterChange={(event) => setFilter(event.target.value)} />
 
       <h2>Add a new</h2>
