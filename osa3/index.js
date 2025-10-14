@@ -60,6 +60,24 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
     const body = request.body
 
+    if (!body.name) {
+        return response.status(400).json({
+            error: 'name missing'
+        })
+    } else if (!body.number) {
+        return response.status(400).json({
+            error: 'number missing'
+        })
+    }
+
+    for (const person of persons) {
+        if (person.name == body.name) {
+            return response.status(400).json({
+                error: 'name already exists'
+            })
+        }
+    };
+
     const person = {
         id: Math.floor(Math.random() * 1000).toString(),
         name: body.name,
@@ -69,7 +87,6 @@ app.post('/api/persons', (request, response) => {
     persons = persons.concat(person)
     response.json(person)
 })
-
 
 const PORT = 3001
 app.listen(PORT, () => {
