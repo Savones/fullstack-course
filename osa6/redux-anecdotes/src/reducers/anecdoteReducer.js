@@ -34,6 +34,14 @@ const reducer = (state = initialState, action) => {
         votes: 0,
         id: newId
       })
+
+    case 'FILTER':
+      return [...initialState]
+        .filter((anecdote) => anecdote.content
+          .toLowerCase()
+          .includes(action.payload
+            .toLowerCase()
+          ))
   }
 
   return state
