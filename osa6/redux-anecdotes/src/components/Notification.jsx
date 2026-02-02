@@ -1,20 +1,18 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { showNotification } from '../reducers/notificationReducer'
-import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
 const Notification = () => {
-  const dispatch = useDispatch()
   const notification = useSelector(state => state.notification)
-
-  useEffect(() => {
-    dispatch(showNotification('render here'))
-  }, [dispatch])
 
   const style = {
     border: 'solid',
     padding: 10,
     borderWidth: 1,
-    marginBottom: 10
+    marginBottom: 10,
+    background: 'lightgrey'
+  }
+
+  if (notification === '') {
+    return <div></div>
   }
 
   return <div style={style}>{notification}</div>
