@@ -38,12 +38,17 @@
     {
       "id": "9c4a",
       "content": "Moi",
-      "votes": 5
+      "votes": 8
     },
     {
       "id": "349d",
       "content": "Uusin",
-      "votes": 2
+      "votes": 3
+    },
+    {
+      "id": "05f6",
+      "content": "Vielä uusi",
+      "votes": 0
     }
   ]
 }
