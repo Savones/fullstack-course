@@ -12,6 +12,7 @@ const AnecdoteForm = () => {
     mutationFn: createAnecdote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+      setTimeout(() => notificationDispatch({ type: 'EMPTY' }), 5000)
     }
   })
 
@@ -19,10 +20,13 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    console.log('new anecdote')
-    newMutation.mutate({ content, votes: 0 })
-    notificationDispatch({ type: 'NEW_ANECDOTE', payload: content })
-    setTimeout(() => notificationDispatch({ type: 'EMPTY' }), 5000)
+    if (content.length < 5) {
+      notificationDispatch({ type: 'ERROR', payload: content })
+      setTimeout(() => notificationDispatch({ type: 'EMPTY' }), 5000)
+    } else {
+      newMutation.mutate({ content, votes: 0 })
+      notificationDispatch({ type: 'NEW_ANECDOTE', payload: content })
+    }
   }
 
   return (
