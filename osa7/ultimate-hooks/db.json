@@ -1,0 +1,63 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom-hooks are awesome!"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "uusi",
+      "id": 3
+    },
+    {
+      "content": "uusi",
+      "id": 4
+    },
+    {
+      "content": "uus",
+      "id": 5
+    },
+    {
+      "content": "vanha",
+      "id": 6
+    },
+    {
+      "content": "vanha",
+      "id": 7
+    },
+    {
+      "content": "sdjo",
+      "id": 8
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "mluukkai",
+      "number": "040-5483923"
+    },
+    {
+      "id": 2,
+      "name": "hellas",
+      "number": "012-123123"
+    },
+    {
+      "name": "mod",
+      "number": "ds832u",
+      "id": 3
+    },
+    {
+      "name": "mod",
+      "number": "ds832u",
+      "id": 4
+    },
+    {
+      "name": "sdjks",
+      "number": "dksj",
+      "id": 5
+    }
+  ]
+}
